@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <title>KSim CAS</title>
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
 <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
@@ -11,7 +11,7 @@
 
 <header class="top-bar">
   <div class="title">KSim CAS</div>
-  <div class="weather" id="weatherChip">Sunny</div>
+  <div id="weatherChip">🌤 Cozy Day</div>
   <div class="audio-controls">
     <button id="musicToggle">♫</button>
     <button id="musicSkip">⏭</button>
@@ -20,19 +20,20 @@
 
 <main class="main">
   <aside class="quick-bar">
-    <button class="icon drink" title="Drink"></button>
-    <button class="icon snack" title="Snack"></button>
-    <button class="icon meal" title="Meal"></button>
-    <button class="icon hygiene" title="Hygiene"></button>
-    <button class="icon mind" title="Homeschool"></button>
-    <button class="icon fun" title="Fun"></button>
-    <button class="icon clean" title="Clean"></button>
-    <button class="icon exercise" title="Exercise"></button>
+    <button class="icon" data-action="drink">Drink</button>
+    <button class="icon" data-action="snack">Snack</button>
+    <button class="icon" data-action="meal">Meal</button>
+    <button class="icon" data-action="hygiene">Hygiene</button>
+    <button class="icon" data-action="mind">Mind</button>
+    <button class="icon" data-action="fun">Fun</button>
+    <button class="icon" data-action="clean">Clean</button>
+    <button class="icon" data-action="exercise">Exercise</button>
   </aside>
 
   <section class="sim-area">
     <div class="shadow"></div>
     <img id="simImage" alt="Kelly">
+    <div id="xpFloatContainer"></div>
   </section>
 
   <div id="overlay"></div>
@@ -42,9 +43,8 @@
       <button data-tab="emotions">Emotions</button>
       <button data-tab="needs">Needs</button>
       <button data-tab="recipes">Recipes</button>
-      <button data-tab="baking">Baking</button>
-      <button data-tab="haircare">HairCare</button>
-      <button data-tab="timers">Timers</button>
+      <button data-tab="hair">Hair / Skin</button>
+      <button data-tab="calendar">Calendar</button>
       <button data-tab="reactions">Reactions</button>
       <button data-tab="skills">Skills</button>
     </nav>
@@ -59,7 +59,6 @@
     <div id="moodText">Good</div>
     <div class="gauge"><div id="moodGauge"></div></div>
   </div>
-  <div class="needs-dots">•••</div>
 </footer>
 
 </div>
