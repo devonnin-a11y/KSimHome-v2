@@ -1,8 +1,7 @@
 document.addEventListener('DOMContentLoaded',()=>{
- bindUI();
- updateMood();
+ bindUI();updateMood();
  setInterval(()=>{
   Object.keys(state.needs).forEach(k=>state.needs[k]=Math.max(0,state.needs[k]-1));
-  updateMood(); saveState();
+  updateMood();saveState();
  },60000);
 });
