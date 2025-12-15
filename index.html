@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>KSim CAS</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+  <div id="app">
+    <header class="top-bar">
+      <div class="title">KSim CAS</div>
+      <div class="weather" id="weatherChip">🌤</div>
+      <div class="audio-controls">
+        <button id="musicToggle">♫</button>
+        <button id="musicSkip">↻</button>
+      </div>
+    </header>
+
+    <main class="main">
+      <aside class="quick-bar">
+        <button data-action="drink">🥤</button>
+        <button data-action="snack">🍫</button>
+        <button data-action="meal">🍽</button>
+        <button data-action="hygiene">✨</button>
+        <button data-action="homeschool">📚</button>
+        <button data-action="entertainment">📺</button>
+        <button data-action="clean">🧽</button>
+        <button data-action="exercise">🏋️</button>
+      </aside>
+
+      <section class="sim-area">
+        <div class="shadow"></div>
+        <img id="simImage" src="" alt="Sim" />
+      </section>
+
+      <div class="overlay" id="overlay"></div>
+
+      <aside class="cas-panel" id="casPanel">
+        <nav class="tabs">
+          <button data-tab="emotions">Emotions</button>
+          <button data-tab="needs">Needs</button>
+          <button data-tab="recipes">Recipes</button>
+          <button data-tab="baking">Baking</button>
+          <button data-tab="haircare">HairCare</button>
+          <button data-tab="timers">Timers</button>
+          <button data-tab="reactions">Reactions</button>
+          <button data-tab="skills">Skills</button>
+        </nav>
+        <div class="tab-content" id="tabContent"></div>
+      </aside>
+    </main>
+
+    <footer class="hud">
+      <div class="headshot" id="homeBtn"></div>
+      <div class="plumbob" id="plumbob"></div>
+      <div class="mood">
+        <div id="moodText">Fine</div>
+        <div class="gauge">
+          <div id="moodGauge"></div>
+        </div>
+      </div>
+      <div class="needs-dots">•••</div>
+    </footer>
+  </div>
+
+  <script src="js/state.js"></script>
+  <script src="js/audio.js"></script>
+  <script src="js/ui.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
