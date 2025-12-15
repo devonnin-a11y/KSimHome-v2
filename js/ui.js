@@ -1,113 +1,22 @@
-const moodImages={happy:'images/kelly-happy.png',playful:'images/kelly-playful.png',sad:'images/kelly-sad.png',inspired:'images/kelly-inspired.png',focused:'images/kelly-focused.png'};
-
-function setSimImage(m){simImage.src=moodImages[m]||'images/kelly-happy.png';}
-
-function openPanel(){casPanel.classList.add('open');overlay.classList.add('show');}
-function closePanel(){casPanel.classList.remove('open');overlay.classList.remove('show');}
-
-function gainXP(skill,amt){
- state.skills[skill]+=amt;
- state.skills.overall+=amt;
- saveState();
- const el=document.createElement('div');
- el.className='xp-float';
- el.textContent=`+${amt} XP (${skill})`;
- xpFloatContainer.appendChild(el);
- setTimeout(()=>el.remove(),2000);
-}
-
-function updateMoodUI(){
- const avg=Object.values(state.needs).reduce((a,b)=>a+b,0)/6;
- moodText.textContent=avg>70?'Great':avg>40?'Okay':'Low';
- moodGauge.style.width=Math.max(10,avg)+'%';
- plumbob.style.background=avg>70?'#6ede8a':avg>40?'#f4d35e':'#ef476f';
-}
-
-function renderEmotions(){
- tabContent.innerHTML=['happy','playful','sad','inspired','focused'].map(m=>`<button class="primary" data-mood="${m}">${m}</button>`).join('');
- document.querySelectorAll('[data-mood]').forEach(b=>b.onclick=()=>{
-  state.mood=b.dataset.mood;
-  setSimImage(state.mood);
-  playMoodSound(state.mood);
-  gainXP('mind',10);
-  updateMoodUI();
- });
-}
-
-function renderNeeds(){
- tabContent.innerHTML=Object.entries(state.needs).map(([k,v])=>`<div class="card">${k}<div class="gauge"><div style="width:${v}%"></div></div></div>`).join('');
-}
-
-function renderRecipes(){
- tabContent.innerHTML=`<div class="card">
- <input id="rName" placeholder="Recipe name">
- <input id="rCat" placeholder="Category">
- <textarea id="rNotes" placeholder="Notes"></textarea>
- <button class="primary" id="addR">Add / Update</button></div>`+
- state.recipes.map((r,i)=>`<div class="card"><b>${r.name}</b><br>${r.notes}<button onclick="editRecipe(${i})">Edit</button></div>`).join('');
- document.getElementById('addR').onclick=()=>{
-  state.recipes.push({name:rName.value,cat:rCat.value,notes:rNotes.value});
-  gainXP('nourish',15);saveState();renderRecipes();
- };
-}
-
-function editRecipe(i){
- const r=state.recipes[i];
- rName.value=r.name;rCat.value=r.cat;rNotes.value=r.notes;
-}
-
-function renderCalendar(){
- if(state.calendar.todayTasks.length===0){
-  const tasks=['Vacuum','Dishes','Laundry','Bathroom','Kitchen','Living Room','Bedroom'];
-  state.calendar.todayTasks=randomSample(tasks,2);
- }
- tabContent.innerHTML=state.calendar.todayTasks.map((t,i)=>`<div class="card">${t}<button onclick="completeTask(${i})">Completed</button></div>`).join('');
- saveState();
-}
-
-function completeTask(i){
- gainXP('homestead',20);
- state.calendar.todayTasks.splice(i,1);
- renderCalendar();
-}
-
-function renderReactions(){
- tabContent.innerHTML=`<div class="card">
- <button class="primary" onclick="logReaction('CAK')">CAK (Cursed at Kids)</button>
- <button class="primary" onclick="logReaction('YAK')">YAK (Yelled at Kids)</button></div>`;
-}
-
-function logReaction(t){
- state.reactions[t].push(Date.now());
- gainXP('mind',5);
- updateMoodUI();
- saveState();
-}
-
-function renderSkills(){
- tabContent.innerHTML=Object.entries(state.skills).map(([k,v])=>{
-  const lvl=Math.floor(Math.sqrt(v/10));
-  return `<div class="card">${k}: Level ${lvl} (${v} XP)</div>`;
- }).join('');
-}
-
-function renderTab(t){
- if(t==='emotions')renderEmotions();
- if(t==='needs')renderNeeds();
- if(t==='recipes')renderRecipes();
- if(t==='calendar')renderCalendar();
- if(t==='reactions')renderReactions();
- if(t==='skills')renderSkills();
-}
-
-function bindUI(){
- simImage.onclick=openPanel;
- overlay.onclick=closePanel;
- document.querySelectorAll('.tabs button').forEach(b=>b.onclick=()=>renderTab(b.dataset.tab));
- musicToggle.onclick=toggleMusic;
- musicSkip.onclick=skipMusic;
- setSimImage(state.mood);
- updateMoodUI();
-}
-
-function randomSample(arr,n){return arr.sort(()=>.5-Math.random()).slice(0,n);}
+const moodImages={good:'images/kelly-happy.png',neutral:'images/kelly-focused.png',low:'images/kelly-sad.png'};
+function openPanel(){panel.classList.add('open');overlay.classList.add('show');}
+function closePanel(){panel.classList.remove('open');overlay.classList.remove('show');}
+function setSim(){simImage.src=moodImages[state.mood]||moodImages.good;}
+function catchUp(){const mins=Math.floor((Date.now()-state.lastActive)/60000);if(mins>0){Object.keys(state.needs).forEach(k=>state.needs[k]=Math.max(0,state.needs[k]-mins));}}
+function moodFromNeeds(){const avg=Object.values(state.needs).reduce((a,b)=>a+b,0)/6;let t='good';if(avg<40)t='low';else if(avg<70)t='neutral';state.mood=t;moodMain.textContent=t;moodGauge.style.width=Math.max(10,avg)+'%';plumbob.style.background=t==='good'?'#6ede8a':t==='neutral'?'#f4d35e':'#ef476f';}
+function xp(skill,amt){state.skills[skill]=(state.skills[skill]||0)+amt;state.skills.overall+=amt;const e=document.createElement('div');e.className='xp';e.textContent=`+${amt} XP (${skill})`;xpFloatLayer.appendChild(e);setTimeout(()=>e.remove(),2000);saveState();}
+function renderEmotions(){tabContent.innerHTML=['happy','playful','focused','sad','inspired'].map(e=>`<div class='card' data-e='${e}'>${e}</div>`).join('');tabContent.querySelectorAll('[data-e]').forEach(el=>el.onclick=()=>{tabContent.querySelectorAll('.card').forEach(c=>c.classList.remove('active'));el.classList.add('active');playSFX('sounds/'+el.dataset.e+'.mp3');xp('mind',5);});}
+function renderNeeds(){tabContent.innerHTML=Object.entries(state.needs).map(([k,v])=>`<div class='card'>${k}: ${v}</div>`).join('');}
+function renderRecipes(filter){tabContent.innerHTML=`<input id='recipeName'><input id='recipeCategory'><textarea id='recipeNotes'></textarea><button id='addRecipe'>Add</button>`+state.recipes.filter(r=>!filter||r.category.includes(filter)).map(r=>`<div class='card'>${r.name}</div>`).join('');addRecipe.onclick=()=>{const cat=recipeCategory.value.toLowerCase();state.recipes.push({name:recipeName.value,category:cat,notes:recipeNotes.value});xp(cat.includes('baking')?'baking':'cooking',15);xp('nourish',5);renderRecipes(filter);};}
+function renderHair(){tabContent.innerHTML=`<input id='hcName'><input id='hcTag'><textarea id='hcNotes'></textarea><button id='addHC'>Add</button>`+state.haircare.map(h=>`<div class='card'>${h.name}</div>`).join('');addHC.onclick=()=>{state.haircare.push({name:hcName.value,tag:hcTag.value,notes:hcNotes.value});xp('selfCare',10);renderHair();};}
+let timers={};
+function renderTimers(){tabContent.innerHTML=['Hydration','Meal','Snack','Bathroom','Shower','Skincare'].map(t=>`<div class='card'><button onclick="startTimer('${t}')">${t}</button></div>`).join('');}
+function startTimer(n){if(timers[n])return;let s=60;timers[n]=setInterval(()=>{s--;if(s<=0){clearInterval(timers[n]);delete timers[n];playSFX('sounds/timer.mp3');xp(n==='Meal'||n==='Snack'?'nourish':'selfCare',5);}},1000);}
+function renderCalendar(){if(state.calendar.today.length===0||Date.now()-state.calendar.last>86400000){const pool=['Dishes','Laundry','Bathroom','Kitchen','Living Room','Bedroom'];state.calendar.today=pool.sort(()=>.5-Math.random()).slice(0,2);state.calendar.last=Date.now();}tabContent.innerHTML=state.calendar.today.map((t,i)=>`<div class='card'>${t}<button onclick='doneTask(${i})'>Done</button></div>`).join('');saveState();}
+function doneTask(i){xp('cleaning',20);xp('homestead',5);state.calendar.today.splice(i,1);renderCalendar();}
+function renderReactions(){tabContent.innerHTML=`<div class='card'>CAK – Cursed at Kids<button onclick="logR('CAK')">Log</button></div><div class='card'>YAK – Yelled at Kids<button onclick="logR('YAK')">Log</button></div>`;}
+function logR(t){state.reactions[t].push(Date.now());state.needs.energy=Math.max(0,state.needs.energy-2);state.needs.quiet=Math.max(0,state.needs.quiet-2);xp('mind',3);moodFromNeeds();}
+function renderSkills(){tabContent.innerHTML=Object.entries(state.skills).map(([k,v])=>`<div class='card'>${k}: Lv ${Math.floor(Math.sqrt(v/10))} (${v} XP)</div>`).join('');}
+function renderNotifications(){tabContent.innerHTML=`<div class='card'><button id='enableNotifs'>Enable Notifications</button></div><div class='card'>Hydration <input type='checkbox' ${state.notifications.hydration?'checked':''}></div><div class='card'>Meals <input type='checkbox' ${state.notifications.meals?'checked':''}></div><div class='card'>Cleaning <input type='checkbox' ${state.notifications.cleaning?'checked':''}></div>`;document.getElementById('enableNotifs').onclick=()=>{Notification.requestPermission().then(p=>{state.notifications.enabled=p==='granted';saveState();});};}
+function renderTab(t){if(t==='emotions')renderEmotions();if(t==='needs')renderNeeds();if(t==='recipes')renderRecipes('');if(t==='baking')renderRecipes('baking');if(t==='haircare')renderHair();if(t==='timers')renderTimers();if(t==='calendar')renderCalendar();if(t==='reactions')renderReactions();if(t==='skills')renderSkills();if(t==='notifications')renderNotifications();}
+function bindUI(){simImage.onclick=openPanel;overlay.onclick=closePanel;headshot.onclick=closePanel;document.querySelectorAll('.tabs button').forEach(b=>b.onclick=()=>renderTab(b.dataset.tab));musicToggle.onclick=toggleMusic;musicSkip.onclick=skipMusic;catchUp();setSim();moodFromNeeds();saveState();}

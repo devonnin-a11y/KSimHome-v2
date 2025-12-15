@@ -3,63 +3,71 @@
 <head>
 <meta charset="UTF-8">
 <title>KSim CAS</title>
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#b7e4c7">
 <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
 <div id="app">
 
 <header class="top-bar">
+  <button id="backBtn">←</button>
   <div class="title">KSim CAS</div>
-  <div id="weatherChip">🌤 Cozy Day</div>
-  <div class="audio-controls">
-    <button id="musicToggle">♫</button>
-    <button id="musicSkip">⏭</button>
-  </div>
+  <div id="weatherChip">Ready</div>
+  <button id="musicToggle">♫</button>
+  <button id="musicSkip">↻</button>
 </header>
 
 <main class="main">
   <aside class="quick-bar">
-    <button class="icon" data-action="drink">Drink</button>
-    <button class="icon" data-action="snack">Snack</button>
-    <button class="icon" data-action="meal">Meal</button>
-    <button class="icon" data-action="hygiene">Hygiene</button>
-    <button class="icon" data-action="mind">Mind</button>
-    <button class="icon" data-action="fun">Fun</button>
-    <button class="icon" data-action="clean">Clean</button>
-    <button class="icon" data-action="exercise">Exercise</button>
+    <button data-action="drink">Drink</button>
+    <button data-action="snack">Snack</button>
+    <button data-action="meal">Meal</button>
+    <button data-action="hygiene">Hygiene</button>
+    <button data-action="homeschool">Homeschool</button>
+    <button data-action="entertain">Entertain</button>
+    <button data-action="clean">Clean</button>
+    <button data-action="exercise">Exercise</button>
   </aside>
 
   <section class="sim-area">
     <div class="shadow"></div>
     <img id="simImage" alt="Kelly">
-    <div id="xpFloatContainer"></div>
+    <div id="xpFloatLayer"></div>
   </section>
 
   <div id="overlay"></div>
 
-  <aside id="casPanel">
+  <aside id="panel">
     <nav class="tabs">
       <button data-tab="emotions">Emotions</button>
       <button data-tab="needs">Needs</button>
       <button data-tab="recipes">Recipes</button>
-      <button data-tab="hair">Hair / Skin</button>
+      <button data-tab="baking">Baking</button>
+      <button data-tab="haircare">HairCare</button>
+      <button data-tab="timers">Timers</button>
       <button data-tab="calendar">Calendar</button>
       <button data-tab="reactions">Reactions</button>
       <button data-tab="skills">Skills</button>
+      <button data-tab="notifications">Notifications</button>
     </nav>
     <div id="tabContent"></div>
   </aside>
 </main>
 
 <footer class="hud">
-  <div id="homeBtn" class="headshot"></div>
+  <div id="headshot"></div>
   <div id="plumbob"></div>
   <div class="mood">
-    <div id="moodText">Good</div>
+    <div id="moodMain">Good</div>
+    <div id="moodSub">Balanced</div>
     <div class="gauge"><div id="moodGauge"></div></div>
   </div>
+  <div class="dots">•••</div>
 </footer>
+
+<button id="installBtn" hidden>Install App</button>
 
 </div>
 
@@ -67,5 +75,10 @@
 <script src="js/audio.js"></script>
 <script src="js/ui.js"></script>
 <script src="js/app.js"></script>
+<script>
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('service-worker.js');
+}
+</script>
 </body>
 </html>
